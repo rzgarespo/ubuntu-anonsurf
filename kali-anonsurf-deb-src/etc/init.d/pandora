@@ -17,20 +17,59 @@ set -e
 #                      GNU/GPL v3
 #
 
+#!/bin/bash
+
+# Define function to clear RAM and drop caches
 function bomb {
-	echo "starting Parrot Pandora's box "
+	# Notify user that the script is starting
+	echo "Starting Parrot Pandora's box"
 	sleep 5
-    echo "Pandora is dropping caches"
-    echo 1024 > /proc/sys/vm/min_free_kbytes
-    echo 3  > /proc/sys/vm/drop_caches
-    echo 1  > /proc/sys/vm/oom_kill_allocating_task
-    echo 1  > /proc/sys/vm/overcommit_memory
-    echo 0  > /proc/sys/vm/oom_dump_tasks
-    echo "Pandora is bombing RAM"
-    sdmem -fllv
-    echo " - RAM bombed"
-    echo "closing Parrot Pandora's box"
+
+	# Drop caches
+	echo "Pandora is dropping caches"
+	if ! echo 1024 > /proc/sys/vm/min_free_kbytes; then
+		echo "Failed to drop caches. Exiting."
+		exit 1
+	fi
+	if ! echo 3  > /proc/sys/vm/drop_caches; then
+		echo "Failed to drop caches. Exiting."
+		exit 1
+	fi
+	if ! echo 1  > /proc/sys/vm/oom_kill_allocating_task; then
+		echo "Failed to drop caches. Exiting."
+		exit 1
+	fi
+	if ! echo 1  > /proc/sys/vm/overcommit_memory; then
+		echo "Failed to drop caches. Exiting."
+		exit 1
+	fi
+	if ! echo 0  > /proc/sys/vm/oom_dump_tasks; then
+		echo "Failed to drop caches. Exiting."
+		exit 1
+	fi
+
+	# Clear RAM
+	echo "Pandora is bombing RAM"
+	if ! sdmem -fllv; then
+		echo "Failed to bomb RAM. Exiting."
+		exit 1
+	fi
+	echo "RAM bombed"
+
+	# Notify user that the script is done
+	echo "Closing Parrot Pandora's box"
 }
+
+# Ask user for confirmation before running the script
+read -p "This script will clear RAM and drop caches. Are you sure you want to continue? [y/n]: " choice
+case "$choice" in 
+  y|Y ) bomb;;
+  n|N ) echo "Script cancelled";;
+  * ) echo "Invalid input. Script cancelled";;
+esac
+
+exit 0
+
 
 
 
