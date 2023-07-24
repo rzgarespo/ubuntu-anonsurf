@@ -1,4 +1,4 @@
-# Ubuntu-anonstealth
+# Ubuntu-anonsurf
 NOTE: This only been tested on Ubuntu 22.10 x86_64
 
 ParrotSec's anonsurf and stealth, ported to work with Ubuntu Linux.
